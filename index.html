@@ -98,17 +98,25 @@
     </div>
 
   <script>
-    const iframe = document.getElementById('myIframe');
-    const loader = document.getElementById('loader');
+  const iframe = document.getElementById('myIframe');
+  const loader = document.getElementById('loader');
 
-    iframe.addEventListener('load', function () {
-      loader.classList.add('hidden');
-      setTimeout(() => loader.remove(), 300);
-    });
+  function hideLoader() {
+    if (!loader) return;
+    loader.classList.add('hidden');
+    setTimeout(() => loader.remove(), 300);
+  }
 
-    if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
-      loader.classList.add('hidden');
-    }
-  </script>
+  // ۱) ثبت listener قبل از اینکه دیر شود
+  iframe.addEventListener('load', hideLoader);
+
+  // ۲) اگر iframe همین الان بارگذاری شده بود (کش / بارگذاری سریع)
+  if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+    hideLoader();
+  }
+
+  // ۳) Fallback: اگر بعد از ۱۵ ثانیه هنوز load نشد، اسپینر را بردار
+  setTimeout(hideLoader, 15000);
+</script>
 </body>
 </html>
